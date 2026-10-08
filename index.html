@@ -1,107 +1,379 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RIYVAN — Everyday Fits Better</title>
-<meta name="description" content="RIYVAN — modern everyday fashion.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIYVAN — Wear Your Way</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#f6f3ee;--card:#fff;--ink:#171717;--muted:#6e6a64;--line:#ded9d1;--accent:#171717}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
-a{text-decoration:none;color:inherit}.wrap{max-width:1180px;margin:auto;padding:0 20px}
-header{position:sticky;top:0;z-index:10;background:rgba(246,243,238,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.nav{height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:900;letter-spacing:4px}.navlinks{display:flex;gap:22px;font-size:14px}.cartbtn,.primary{background:var(--ink);color:white;border:0;border-radius:999px;padding:12px 18px;cursor:pointer;font-weight:700}
-.hero{padding:70px 0 55px;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}.eyebrow{font-size:12px;letter-spacing:3px;color:var(--muted);font-weight:700}.hero h1{font-size:clamp(48px,8vw,92px);line-height:.9;margin:16px 0 22px;letter-spacing:-5px}.hero p{max-width:520px;color:var(--muted);font-size:18px;line-height:1.6}.heroimg{min-height:430px;border-radius:28px;background:linear-gradient(145deg,#ded7cd,#aaa39a);display:flex;align-items:end;justify-content:center;padding:30px;font-size:64px;font-weight:900;letter-spacing:7px}
-.section{padding:35px 0 70px}.sectionhead{display:flex;justify-content:space-between;align-items:end;margin-bottom:24px}.section h2{font-size:34px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filter{border:1px solid var(--line);background:transparent;padding:9px 14px;border-radius:999px;cursor:pointer}.filter.active{background:var(--ink);color:#fff}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.product{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden}.pimg{height:290px;background:#e4dfd7;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;letter-spacing:3px}.pbody{padding:16px}.pname{font-weight:800;margin-bottom:7px}.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:14px}.price{font-weight:900;color:var(--ink)}
-footer{border-top:1px solid var(--line);padding:35px 0;color:var(--muted);font-size:13px}.adminlink{cursor:pointer;text-decoration:underline}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:30;padding:20px}.modal.show{display:flex;align-items:center;justify-content:center}.panel{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px}.paneltop{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:#eee;border-radius:50%;width:36px;height:36px;cursor:pointer}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}.field.full{grid-column:1/-1}.field input,.field select{padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit}.adminrow{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.danger{border:1px solid #c8bebe;background:#fff;padding:8px 12px;border-radius:9px;cursor:pointer}
-.drawer{display:none;position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45)}.drawer.show{display:block}.cart{position:absolute;right:0;top:0;height:100%;width:min(430px,100%);background:#fff;padding:22px;overflow:auto}.cartitem{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:14px 0}.qty{display:flex;gap:8px;align-items:center}.qty button{border:1px solid var(--line);background:#fff;border-radius:6px;width:28px;height:28px}.total{font-size:22px;font-weight:900;margin:20px 0}.empty{color:var(--muted);padding:35px 0;text-align:center}
-@media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:40px}.heroimg{min-height:260px}.grid{grid-template-columns:repeat(2,1fr)}.navlinks{display:none}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
-@media(max-width:480px){.wrap{padding:0 14px}.grid{gap:10px}.pimg{height:210px}.hero h1{letter-spacing:-3px}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f3ee;color:#171717}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid #ddd}
+.nav{max-width:1180px;margin:auto;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.logo{font-size:25px;font-weight:900;letter-spacing:4px}
+.tag{font-size:11px;color:#777;letter-spacing:2px}
+.navbtn{border:1px solid #222;background:#171717;color:#fff;padding:10px 15px;border-radius:7px}
+.hero{max-width:1180px;margin:auto;padding:75px 20px 45px}
+.hero h1{font-size:52px;margin:0 0 12px;letter-spacing:-2px}
+.hero p{color:#666;max-width:520px;line-height:1.6}
+.wrap{max-width:1180px;margin:auto;padding:0 20px 60px}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:25px}
+.tab{border:1px solid #ccc;background:#fff;padding:9px 15px;border-radius:20px}
+.tab.active{background:#171717;color:white}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:#fff;border:1px solid #ddd;border-radius:10px;overflow:hidden}
+.card img{width:100%;height:270px;object-fit:cover;background:#eee}
+.cardbody{padding:15px}
+.card h3{margin:0 0 8px}
+.price{font-weight:bold;margin-bottom:12px}
+.stock{font-size:12px;color:#777;margin-bottom:12px}
+.buy{width:100%;border:0;background:#171717;color:#fff;padding:11px;border-radius:6px}
+.empty{text-align:center;padding:50px;color:#777}
+.admin{display:none;max-width:1180px;margin:30px auto;padding:20px;background:#fff;border:1px solid #ddd;border-radius:10px}
+.admin.show{display:block}
+.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:6px}
+.formfull{grid-column:1/-1}
+.admin button{border:0;background:#171717;color:#fff;padding:10px 15px;border-radius:6px}
+.productrow{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid #ddd;padding:12px 0}
+.delete{background:#b00020!important}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.box{background:#fff;border-radius:10px;padding:25px;width:100%;max-width:420px}
+.box h2{margin-top:0}
+.box input{margin-bottom:12px}
+.close{float:right;background:none!important;color:#111!important;font-size:20px;padding:0!important}
+footer{text-align:center;border-top:1px solid #ddd;padding:25px;color:#777}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:40px}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}}
 </style>
 </head>
+
 <body>
-<header><div class="wrap nav">
-<div><div class="logo">RIYVAN</div><div style="font-size:9px;letter-spacing:2.5px;color:#6e6a64;margin-top:-2px">WEAR YOUR WAY</div></div>
-<nav class="navlinks"><a href="#shop">Shop</a><a href="#about">About</a></nav>
-<button class="cartbtn" onclick="openCart()">Cart (<span id="cartCount">0</span>)</button>
-</div></header>
 
-<main>
-<section class="wrap hero">
-<div><div class="eyebrow">RIYVAN / DROP 01</div><h1>Everyday<br>Fits Better.</h1><p>Clean, versatile pieces made for everyday movement. Discover the latest RIYVAN drop.</p><a class="primary" href="#shop">Shop the drop</a></div>
-<div class="heroimg"><div><div style="font-size:64px;font-weight:900;letter-spacing:7px">RIYVAN</div><div style="font-size:14px;letter-spacing:5px;text-align:center;margin-top:10px">WEAR YOUR WAY</div></div></div>
-</section>
-
-<section id="shop" class="wrap section">
-<div class="sectionhead"><div><div class="eyebrow">COLLECTION</div><h2>Shop</h2></div><div class="filters" id="filters"></div></div>
-<div class="grid" id="products"></div>
-</section>
-
-<section id="about" class="wrap section">
-<div class="sectionhead"><div><div class="eyebrow">THE BRAND</div><h2>Wear your way.</h2></div></div>
-<p style="max-width:720px;color:var(--muted);font-size:17px;line-height:1.7">RIYVAN is an independent fashion label focused on simple, wearable pieces. This starter store is designed to be managed by you without a paid e-commerce platform.</p>
-</section>
-</main>
-
-<footer><div class="wrap">© <span id="year"></span> RIYVAN. All rights reserved. · <span class="adminlink" onclick="openAdmin()">Store Admin</span></div></footer>
-
-<div class="modal" id="adminModal"><div class="panel">
-<div class="paneltop"><h2>RIYVAN Store Admin</h2><button class="close" onclick="closeAdmin()">×</button></div>
-<p style="color:#6e6a64">This free version saves products in this browser using local storage.</p>
-<form id="productForm">
-<div class="formgrid">
-<div class="field"><label>Product name</label><input id="name" required></div>
-<div class="field"><label>Category</label><input id="category" placeholder="T-Shirts" required></div>
-<div class="field"><label>Price (₹)</label><input id="price" type="number" min="0" required></div>
-<div class="field"><label>Stock</label><input id="stock" type="number" min="0" required></div>
-<div class="field full"><label>Image URL (optional)</label><input id="image" placeholder="https://..."></div>
+<header>
+<div class="nav">
+  <div>
+    <div class="logo">RIYVAN</div>
+    <div class="tag">WEAR YOUR WAY</div>
+  </div>
+  <button class="navbtn" onclick="openLogin()">Owner Login</button>
 </div>
-<button class="primary" type="submit">Add product</button>
-</form>
-<div id="adminList" style="margin-top:20px"></div>
-</div></div>
+</header>
 
-<div class="drawer" id="cartDrawer" onclick="if(event.target===this)closeCart()"><div class="cart">
-<div class="paneltop"><h2>Your Cart</h2><button class="close" onclick="closeCart()">×</button></div>
-<div id="cartItems"></div><div class="total" id="cartTotal">₹0</div>
-<button class="primary" style="width:100%" onclick="whatsappOrder()">Order on WhatsApp</button>
-<p style="font-size:12px;color:#777">Replace the WhatsApp number in the code before launch.</p>
-</div></div>
+<section class="hero">
+  <h1>WEAR YOUR WAY.</h1>
+  <p>Premium everyday fashion by RIYVAN. Simple. Modern. Yours.</p>
+</section>
+
+<div class="wrap">
+
+  <div class="tabs">
+    <button class="tab active" onclick="filterProducts('All',this)">All</button>
+    <button class="tab" onclick="filterProducts('T-Shirts',this)">T-Shirts</button>
+    <button class="tab" onclick="filterProducts('Hoodies',this)">Hoodies</button>
+    <button class="tab" onclick="filterProducts('Oversized',this)">Oversized</button>
+  </div>
+
+  <div id="products" class="grid">
+    <div class="empty">Loading products...</div>
+  </div>
+
+</div>
+
+<section id="adminPanel" class="admin">
+  <h2>RIYVAN Store Admin</h2>
+  <p id="loginStatus"></p>
+
+  <form id="productForm" class="formgrid">
+    <input id="pName" placeholder="Product name" required>
+    <input id="pPrice" type="number" placeholder="Price" required>
+    <input id="pStock" type="number" placeholder="Stock" required>
+    <select id="pCategory">
+      <option>T-Shirts</option>
+      <option>Hoodies</option>
+      <option>Oversized</option>
+    </select>
+    <input id="pImage" class="formfull" placeholder="Image URL (optional)">
+    <button class="formfull" type="submit">Add Product</button>
+  </form>
+
+  <h3>Products</h3>
+  <div id="adminProducts"></div>
+
+  <button onclick="logout()" style="margin-top:15px">Logout</button>
+</section>
+
+<div id="loginModal" class="modal">
+  <div class="box">
+    <button class="close" onclick="closeLogin()">×</button>
+    <h2>Owner Login</h2>
+
+    <input id="email" type="email" placeholder="Owner email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()" style="width:100%">Login</button>
+
+    <p id="loginMessage" style="font-size:13px;color:#777"></p>
+  </div>
+</div>
+
+<footer>
+RIYVAN © 2026 — WEAR YOUR WAY
+</footer>
 
 <script>
-const DEFAULT_PRODUCTS=[
-{id:1,name:"Essential Oversized Tee",category:"T-Shirts",price:699,stock:20,image:""},
-{id:2,name:"Everyday Hoodie",category:"Hoodies",price:1299,stock:12,image:""},
-{id:3,name:"Relaxed Fit Jeans",category:"Jeans",price:1599,stock:8,image:""},
-{id:4,name:"Classic Cap",category:"Accessories",price:499,stock:15,image:""}
-];
-let products=JSON.parse(localStorage.getItem("riyvan_products")||"null")||DEFAULT_PRODUCTS;
-let cart=JSON.parse(localStorage.getItem("riyvan_cart")||"[]");
-let active="All";
-const waNumber="918901214642"; // CHANGE THIS TO YOUR WHATSAPP NUMBER
+const SUPABASE_URL = "https://kdvgnuprprahkezbdfmg.supabase.co";
 
-function save(){localStorage.setItem("riyvan_products",JSON.stringify(products));localStorage.setItem("riyvan_cart",JSON.stringify(cart))}
-function cats(){return ["All",...new Set(products.map(p=>p.category))]}
-function renderFilters(){document.getElementById("filters").innerHTML=cats().map(c=>`<button class="filter ${c===active?"active":""}" onclick="active=${JSON.stringify(c)};render()">${c}</button>`).join("")}
-function render(){
-renderFilters();
-let list=active==="All"?products:products.filter(p=>p.category===active);
-document.getElementById("products").innerHTML=list.map(p=>`<article class="product"><div class="pimg" style="${p.image?`background-image:url('${p.image}');background-size:cover;background-position:center;color:transparent`:""}">${p.image?"":p.category.toUpperCase()}</div><div class="pbody"><div class="pname">${esc(p.name)}</div><div class="meta"><span>${p.stock>0?p.stock+" in stock":"Sold out"}</span><span class="price">₹${p.price.toLocaleString("en-IN")}</span></div><button class="primary" style="width:100%;margin-top:12px" ${p.stock<1?"disabled":""} onclick="add(${p.id})">${p.stock<1?"Sold out":"Add to cart"}</button></div></article>`).join("")||"<div class='empty'>No products yet.</div>";
-document.getElementById("cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0);renderCart();renderAdmin();save()
+/*
+IMPORTANT:
+Paste your SUPABASE PUBLISHABLE KEY below.
+DO NOT use the service_role/secret key.
+*/
+const SUPABASE_KEY = "sb_publishable_mnYqgS6i2QjrY5axODG6ig_UxaIL7Cl"
+
+const OWNER_UID = "3db53ac5-4bb7-4e96-902a-8f7e04515c49";
+const WHATSAPP = "918901214642";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allProducts = [];
+let currentFilter = "All";
+
+async function loadProducts(){
+  const {data,error} = await db
+    .from("products")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    document.getElementById("products").innerHTML =
+      '<div class="empty">Unable to load products.</div>';
+    console.error(error);
+    return;
+  }
+
+  allProducts = data || [];
+  renderProducts();
 }
-function add(id){let p=products.find(x=>x.id===id),i=cart.find(x=>x.id===id);if(!p||p.stock<1)return;if(i)i.qty=Math.min(i.qty+1,p.stock);else cart.push({id,qty:1});render()}
-function change(id,d){let i=cart.find(x=>x.id===id),p=products.find(x=>x.id===id);if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(x=>x.id!==id);else if(i.qty>p.stock)i.qty=p.stock;render()}
-function renderCart(){let el=document.getElementById("cartItems");if(!cart.length){el.innerHTML="<div class='empty'>Your cart is empty.</div>";document.getElementById("cartTotal").textContent="₹0";return}let total=0;el.innerHTML=cart.map(i=>{let p=products.find(x=>x.id===i.id);if(!p)return"";total+=p.price*i.qty;return `<div class="cartitem"><div><b>${esc(p.name)}</b><div style="color:#777">₹${p.price.toLocaleString("en-IN")}</div></div><div class="qty"><button onclick="change(${p.id},-1)">−</button><b>${i.qty}</b><button onclick="change(${p.id},1)">+</button></div></div>`}).join("");document.getElementById("cartTotal").textContent="₹"+total.toLocaleString("en-IN")}
-function openCart(){document.getElementById("cartDrawer").classList.add("show");renderCart()}function closeCart(){document.getElementById("cartDrawer").classList.remove("show")}
-function whatsappOrder(){if(!cart.length)return;let lines=["Hi RIYVAN, I want to place an order:",""];let total=0;cart.forEach(i=>{let p=products.find(x=>x.id===i.id);if(p){lines.push(`${p.name} x ${i.qty} = ₹${p.price*i.qty}`);total+=p.price*i.qty}});lines.push("",`Total: ₹${total}`,"","Name:","Address:","Phone:");location.href=`https://wa.me/${waNumber}?text=${encodeURIComponent(lines.join("\\n"))}`}
-function openAdmin(){document.getElementById("adminModal").classList.add("show");renderAdmin()}function closeAdmin(){document.getElementById("adminModal").classList.remove("show")}
-function renderAdmin(){let el=document.getElementById("adminList");if(!el)return;el.innerHTML=products.map(p=>`<div class="adminrow"><div><b>${esc(p.name)}</b><div style="font-size:12px;color:#777">₹${p.price} · stock ${p.stock}</div></div><button class="danger" onclick="del(${p.id})">Delete</button></div>`).join("")}
-function del(id){products=products.filter(p=>p.id!==id);cart=cart.filter(i=>i.id!==id);render()}
-document.getElementById("productForm").addEventListener("submit",e=>{e.preventDefault();products.push({id:Date.now(),name:name.value,category:category.value,price:Number(price.value),stock:Number(stock.value),image:image.value.trim()});e.target.reset();render()});
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-document.getElementById("year").textContent=new Date().getFullYear();render();
+
+function renderProducts(){
+  const box = document.getElementById("products");
+
+  let products = allProducts;
+
+  if(currentFilter !== "All"){
+    products = products.filter(p => p.category === currentFilter);
+  }
+
+  if(!products.length){
+    box.innerHTML = '<div class="empty">No products available yet.</div>';
+    return;
+  }
+
+  box.innerHTML = products.map(p => `
+    <div class="card">
+      ${
+        p.image_url
+        ? `<img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}">`
+        : `<div style="height:270px;background:#eee;display:flex;align-items:center;justify-content:center;color:#777">RIYVAN</div>`
+      }
+
+      <div class="cardbody">
+        <h3>${escapeHtml(p.name)}</h3>
+        <div class="price">₹${Number(p.price).toLocaleString("en-IN")}</div>
+        <div class="stock">
+          ${p.stock > 0 ? `${p.stock} available` : "Out of stock"}
+        </div>
+
+        <button
+          class="buy"
+          ${p.stock <= 0 ? "disabled" : ""}
+          onclick="orderWhatsApp('${escapeJs(p.name)}',${p.price})">
+          ${p.stock > 0 ? "Order on WhatsApp" : "Out of stock"}
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function filterProducts(category,button){
+  currentFilter = category;
+
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  button.classList.add("active");
+
+  renderProducts();
+}
+
+function orderWhatsApp(name,price){
+  const message =
+    `Hello RIYVAN 👋%0A%0AI want to order:%0AProduct: ${name}%0APrice: ₹${price}%0A%0APlease share the order details.`;
+
+  window.open(`https://wa.me/${WHATSAPP}?text=${message}`,"_blank");
+}
+
+function openLogin(){
+  document.getElementById("loginModal").classList.add("show");
+}
+
+function closeLogin(){
+  document.getElementById("loginModal").classList.remove("show");
+}
+
+async function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("loginMessage");
+
+  msg.textContent = "Logging in...";
+
+  const {data,error} = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+    msg.textContent = error.message;
+    return;
+  }
+
+  if(data.user.id !== OWNER_UID){
+    await db.auth.signOut();
+    msg.textContent = "This account is not the store owner.";
+    return;
+  }
+
+  closeLogin();
+  showAdmin(data.user);
+}
+
+async function showAdmin(user){
+  document.getElementById("adminPanel").classList.add("show");
+  document.getElementById("loginStatus").textContent =
+    "Logged in as " + user.email;
+
+  renderAdminProducts();
+
+  window.scrollTo({
+    top:document.getElementById("adminPanel").offsetTop - 80,
+    behavior:"smooth"
+  });
+}
+
+function renderAdminProducts(){
+  const box = document.getElementById("adminProducts");
+
+  if(!allProducts.length){
+    box.innerHTML = "<p>No products yet.</p>";
+    return;
+  }
+
+  box.innerHTML = allProducts.map(p => `
+    <div class="productrow">
+      <div>
+        <b>${escapeHtml(p.name)}</b><br>
+        ₹${Number(p.price).toLocaleString("en-IN")}
+        · Stock: ${p.stock}
+        · ${escapeHtml(p.category)}
+      </div>
+
+      <button class="delete" onclick="deleteProduct('${p.id}')">
+        Delete
+      </button>
+    </div>
+  `).join("");
+}
+
+document.getElementById("productForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+
+  const {data:{user}} = await db.auth.getUser();
+
+  if(!user || user.id !== OWNER_UID){
+    alert("Owner login required.");
+    return;
+  }
+
+  const product = {
+    name:document.getElementById("pName").value.trim(),
+    price:Number(document.getElementById("pPrice").value),
+    stock:Number(document.getElementById("pStock").value),
+    category:document.getElementById("pCategory").value,
+    image_url:document.getElementById("pImage").value.trim()
+  };
+
+  const {error} = await db.from("products").insert(product);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  e.target.reset();
+  await loadProducts();
+  renderAdminProducts();
+
+  alert("Product added successfully!");
+});
+
+async function deleteProduct(id){
+  if(!confirm("Delete this product?")) return;
+
+  const {data:{user}} = await db.auth.getUser();
+
+  if(!user || user.id !== OWNER_UID){
+    alert("Owner login required.");
+    return;
+  }
+
+  const {error} = await db
+    .from("products")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  await loadProducts();
+  renderAdminProducts();
+}
+
+async function logout(){
+  await db.auth.signOut();
+  document.getElementById("adminPanel").classList.remove("show");
+}
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function escapeJs(value){
+  return String(value ?? "")
+    .replaceAll("\\","\\\\")
+    .replaceAll("'","\\'")
+    .replaceAll("\n"," ");
+}
+
+db.auth.onAuthStateChange((event,session)=>{
+  if(session?.user?.id === OWNER_UID){
+    showAdmin(session.user);
+  }
+});
+
+loadProducts();
 </script>
+
 </body>
 </html>
